@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    body {
+        margin: 0;
+        font-family: 'Arial', sans-serif;
+    }
+
+</style>
+    <!-- Adding Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='setup.css') }}">
+
+    <div class="setup-container">
+        <div class="setup-form">
+            <h2 class="text-center">Account Setup</h2>
+            <form method="POST">
+                <div class="form-group">
+                    <label>New or Current Student?</label>
+                    <select id="student_type" name="student_type" class="form-control">
+                        <option value="new">New Student</option>
+                        <option value="current">Current Student</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="course">Select your course:</label>
+                    <select id="course" name="course" class="form-control">
+                        {% for course in courses %}
+                            <option value="{{ course.id }}">{{ course.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="major">Select your major:</label>
+                    <select id="major" name="major" class="form-control">
+                        {% for major in majors %}
+                            <option value="{{ major.id }}" data-course-id="{{ major.course_id }}">{{ major.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="year">Year of Commencement:</label>
+                    <select id="year" name="year" class="form-control">
+                        {% for year in years %}
+                            <option value="{{ year }}">{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="session">Session:</label>
+                    <select id="session" name="session" class="form-control">
+                        <option value="spring">Spring</option>
+                        <option value="autumn">Autumn</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='major.js') }}"></<script !src=""></script>>
+{% endblock %}

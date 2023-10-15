@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    
+    
+</style>
+
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='landing.css') }}">
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="h1-title">Welcome to UOW Course Planner!</h1>
+            <p class="paragraph">
+                The UOW Course Planner is your gateway to a hassle-free university experience at the University of Wollongong. This innovative platform empowers students to seamlessly plan their courses, ensuring a balanced and well-organized academic journey. Dive in and explore a world of learning with enhanced visibility and control over your course structures, schedules, and more!
+            </p>
+        </div>
+    </div>
+    
+    {% if not user.is_authenticated %}
+    <div class="row mt-4 column-container">
+        <div class="col-md-6 glass-effect">
+            <h2 class="column-headings">Embark on Your Academic Journey!</h2>
+            <p class="column-paragraph">Discover the freedom to shape your academic path. Sign up now to unlock a wealth of planning features tailored just for you!</p>
+            <a class="btn btn-primary" href="{{ url_for('auth.sign_up') }}">Sign Up</a>
+        </div>
+        <div class="divider"></div>  <!-- This is the divider -->
+        <div class="col-md-6 glass-effect">
+            <h2 class="column-headings">Step into Your Dashboard!</h2>
+            <p class="column-paragraph">Already a member? Log in and continue shaping your learning experience with our intuitive and user-friendly interface!</p>
+            <a class="btn btn-primary" href="{{ url_for('auth.login') }}">Login</a>
+        </div>
+    </div>
+    
+    {% endif %}
+</div>
+
+
+<div class="footer">
+    <p>© 2023 UOW Course Planner. All Rights Reserved. Crafted with ❤️ at the University of Wollongong.</p>
+</div>
+
+{% endblock %}
+

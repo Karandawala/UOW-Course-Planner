@@ -1,0 +1,24 @@
+/*Email Verification Styling */
+
+#verification-container {
+    text-align: center;
+    padding: 20px;
+    max-width: 600px;
+    margin: auto;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin-top: 30px;
+}
+
+#verification-container h2 {
+    color: #af1e1e;
+    font-family: 'Arial', sans-serif;
+    font-size: 26px
+}
+
+#verification-container p {
+    color: #666;
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+}

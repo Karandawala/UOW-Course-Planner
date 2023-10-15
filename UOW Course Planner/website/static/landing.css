@@ -1,0 +1,163 @@
+/* landing.css */
+body {
+    position: relative;
+    background-color: #f8f9fa;
+    overflow: hidden;
+    background-image: url('image.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+
+body::before, body::after, .bubble {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(0, 110, 230, 0.3); /* A semi-transparent blue */
+    animation: bubbleMove linear infinite;
+    z-index: 1;
+}
+
+body::before {
+    top: 10%;
+    left: 15%;
+    width: 100px;
+    height: 100px;
+    animation-duration: 5s;
+}
+
+body::after {
+    bottom: 10%;
+    right: 10%;
+    width: 150px;
+    height: 150px;
+    animation-duration: 7s;
+}
+
+.bubble {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    animation-duration: 6s;
+}
+
+@keyframes bubbleMove {
+    0% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-50px) scale(1.1);
+    }
+    100% {
+        transform: translateY(0) scale(1);
+    }
+}
+
+.container {
+    margin-top: 5%;
+    text-align: center;
+}
+
+.h1-title {
+    font-size: 3em;
+    color: #000000;
+    margin-bottom: 20px;
+}
+
+.paragraph {
+    font-size: 1.2em;
+    color: #6c757d;
+    line-height: 1.6em;
+    margin-bottom: 30px;
+}
+
+.column-headings {
+    font-size: 1.5em;
+    color: #495057;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.column-paragraph {
+    font-size: 1em;
+    color: #6c757d;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+    color: #fff;
+    padding: 15px 30px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.footer {
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Glassmorphism effect for the columns */
+.columns-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.glass-effect {
+    background: rgba( 255, 255, 255, 0.25 );
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 5px );
+    -webkit-backdrop-filter: blur( 5px );
+    border-radius: 10px;
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
+}
+
+.glass-effect:hover {
+    box-shadow: 0 7px 14px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.divider {
+    flex: 0.05;
+    background: rgba(255, 255, 255, 0.2);
+    height: 60%;
+    align-self: center;
+}
+
+.h1-title {
+    color: #ffffff;
+}
+
+.paragraph {
+    color: #e5e5e5;
+}
+
+.column-paragraph {
+    color: #d0d0d0;
+}
+
+.column-headings {
+    color: #e5e5e5;
+}
+
+
+

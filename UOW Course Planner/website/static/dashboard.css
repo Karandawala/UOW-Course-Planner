@@ -1,0 +1,284 @@
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    position: relative;
+    overflow-y: auto;
+    height: 100vh;
+    background-color: #09114E;  /* This color will be shown if the image doesn't load or before it loads */
+}
+
+body::before {
+    content: "";
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1; /* Place it behind content */
+
+    background-image: url('image.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+
+/* Glassmorphic effect for the main container */
+.dashboard-container {
+    width: 98%;
+    margin: 1% auto;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.subjects-container,
+.planner-container {
+    width: 48%;
+    box-sizing: border-box;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+
+}
+
+.planner-container {
+    overflow-y: auto;
+    max-height: 85vh;
+    padding: 1em;
+    margin-bottom: 1em;
+}
+
+.subjects-container {
+    overflow-y: auto;
+    max-height: 85vh;
+    padding: 1em;
+    margin-bottom: 1em;
+    color: #fff;
+}
+
+.planner-container h2,
+.planner-container .session h3 {
+    font-size: 1em;
+    margin: 5px 0;
+    color: #fff;
+}
+
+.planner-container .placeholder {
+    min-height: 30px;
+    margin: 5px 0;
+    padding: 5px;
+}
+
+.subject {
+    background-color: #e0e0e0;
+    border-radius: 15px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    margin-bottom: 10px;
+    cursor: move;
+    transition: all 0.3s ease;
+    color: black;
+}
+
+.subject:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.core-subject {
+    background-color: #98FB98;
+}
+
+.major-core-subject {
+    background-color: #ADD8E6;
+}
+
+.elective-subject {
+    background-color: #FFD700;
+}
+
+.dropdown-menu {
+    z-index: 2000 !important;
+}
+
+.subject .dropdown {
+    position: static;
+}
+
+.subject .dropdown-menu {
+    position: absolute;
+    width: 100%;
+}
+
+.custom-small-btn {
+    font-size: 12.5px;
+    padding: 2px 6px;
+}
+
+/* Subject Blink Styling */
+
+@keyframes fading {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+
+.blink {
+    animation: fading 0.5s linear infinite;
+}
+
+#accumulated-credits {
+    position: fixed;
+    bottom: 90px;
+    right: 49px;
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 10px;
+    font-weight: bold;
+    z-index: 1000;
+}
+
+#accumulated-credits:hover {
+    background-color: #555;
+}
+
+/* Styling for Legend Container */
+.legend-container {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: #fff;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+
+/* Styling for Legend */
+.legend {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Styling for Legend Items */
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* Styling for Legend Item Colors */
+.legend-color {
+    width: 48px;
+    height: 20px;
+    margin-right: 5px;
+    border-radius: 50%;
+}
+
+/* Define colors for each subject type */
+.core .legend-color {
+    background-color: #98FB98;
+}
+
+.elective .legend-color {
+    background-color: #FFD700;
+}
+
+.major .legend-color {
+    background-color: #ADD8E6;
+}
+
+/* Styling for legend text */
+.legend-item span {
+    font-size: 14px;
+}
+
+/* Styles for the capstone selection table */
+.capstone-selection {
+    margin-top: 20px;
+   color: #fff;
+}
+
+.capstone-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.capstone-table th,
+.capstone-table td {
+    border: 1px solid #ccc;
+    text-align: left;
+    padding: 8px;
+    background-color: #0d0c45;
+
+}
+
+.capstone-table th {
+    background-color: #b2b9c2;
+    color: black;
+}
+
+.capstone-subject {
+    background-color: orange;
+}
+
+#recommend-btn {
+    position: fixed;
+    bottom: 150px;
+    left: 20px;
+    padding: 10px 10px;
+    font-size: 0.92em;
+    background: rgba(150, 150, 150, 0.5); /* Semi-transparent light grey */
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Lighter border for the glass effect */
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(1px); /* Frosted appearance */
+    transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+}
+
+#recommend-btn:hover {
+    background: rgba(120, 120, 120, 0.6); /* Slightly darker grey on hover but still semi-transparent */
+    transform: scale(1.05); /* Slight scale up on hover */
+    border: 1px solid rgba(255, 255, 255, 0.5); /* Lighter border on hover */
+}
+
+#save-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 42px;
+    padding: 10px 15px;
+    font-size: 1em;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
+
+    /* Bootstrap button hover, active, and focus styles */
+    box-shadow: none;
+}
+
+#save-btn:hover {
+    background-color: #0056b3;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+#save-btn:active,
+#save-btn:focus {
+    background-color: #004085;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+}
+

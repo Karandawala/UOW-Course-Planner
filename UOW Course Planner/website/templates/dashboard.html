@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/dragula@3.7.2/dist/dragula.min.css">
+
+    {% set year = starting_year %}
+    {% if starting_session == 'autumn' %}
+        {% set sessions = ['Autumn ' + year|string, 'Spring ' + year|string, 'Autumn ' + (year + 1)|string, 'Spring ' + (year + 1)|string] %}
+    {% else %} {# starting_session is Spring #}
+        {% set sessions = ['Spring ' + year|string, 'Autumn ' + (year + 1)|string, 'Spring ' + (year + 1)|string, 'Autumn ' + (year + 2)|string] %}
+    {% endif %}
+
+
+    <!-- Container for the Legend -->
+    <div class="legend-container">
+        <!-- Legend for Subject Types -->
+        <div class="legend">
+            <div class="legend-item core">
+                <div class="legend-color"></div>
+                <span>Core Subjects</span>
+            </div>
+            <div class="legend-item elective">
+                <div class="legend-color"></div>
+                <span>Electives</span>
+            </div>
+            <div class="legend-item major">
+                <div class="legend-color"></div>
+                <span>Major Subjects</span>
+            </div>
+        </div>
+    </div>
+
+    <button id="recommend-btn">Recommend Subjects</button>
+
+
+
+    <div id="accumulated-credits">Credits: 0</div>
+
+    <div id="currentSelection" style="position: fixed; bottom: 10px; left: 10px; background-color: #f3f4f6; padding: 5px; border-radius: 3px; z-index: 1000; font-size: 0.9em; line-height: 1.2; visibility: hidden;">
+        <strong>Current Selection:</strong>
+        <p style="margin: 2px 0;">Course: {{ current_user.profile.course.name }}</p>
+        <p style="margin: 2px 0;">Major: {{ current_user.profile.major.name }}</p>
+    </div>
+
+
+
+
+    <!-- Profile Settings outside the planner container -->
+<div class="profile-settings" style="display: flex; justify-content: center; gap: 20px; padding: 15px 0; background-color: #b2b9c2; margin-top: 20px; border-radius: 10px;">
+    <form action="{{ url_for('views.update_profile') }}" method="POST" style="display: flex; gap: 20px; align-items: center;">
+
+        <!-- Course Dropdown -->
+        <div class="form-group">
+            <label for="course" style="font-weight: bold;">Course:</label>
+            <select id="course" name="course" class="form-control">
+                {% for course in courses %}
+                    <option value="{{ course.id }}" {% if course.id == current_user.profile.course_id %}selected{% endif %}>{{ course.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Major Dropdown -->
+        <div class="form-group">
+            <label for="major" style="font-weight: bold;">Major:</label>
+            <select id="major" name="major" class="form-control">
+                {% for major in majors %}
+                    <option value="{{ major.id }}" data-course-id="{{ major.course_id }}" {% if major.id == current_user.profile.major_id %}selected{% endif %}>{{ major.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Year Dropdown -->
+        <div class="form-group">
+            <label for="year" style="font-weight: bold;">Year:</label>
+            <select id="year" name="year" class="form-control">
+                {% for year in years %}
+                    <option value="{{ year }}" {% if year == current_user.profile.year %}selected{% endif %}>{{ year }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Session Dropdown -->
+        <div class="form-group">
+            <label for="session" style="font-weight: bold;">Session:</label>
+            <select id="session" name="session" class="form-control">
+                <option value="spring" {% if current_user.profile.session == 'spring' %}selected{% endif %}>Spring</option>
+                <option value="autumn" {% if current_user.profile.session == 'autumn' %}selected{% endif %}>Autumn</option>
+            </select>
+        </div>
+
+        <!-- Regenerate Button -->
+        <button style="margin-top: 14px" type="submit" class="btn btn-primary">Update</button>
+    </form>
+</div>
+
+<!-- Table for selecting capstone/research project -->
+    <div class="capstone-selection">
+        <h3>Select Capstone/Research Project</h3>
+        <table class="capstone-table" >
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Code</th>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for subject in subjects_by_session['capstone'] %}
+                <tr>
+                    <td><input type="radio" name="capstone_project" value="{{ subject['code'] }}"></td>
+                    <td style="color: #ffffff;">{{ subject['code'] }}</td>
+                    <td style="color: #ffffff;">{{ subject['name'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="container-fluid dashboard-container" data-reset-subject-url="{{ url_for('views.reset_subject') }}" data-starting-session="{{ starting_session }}">
+    <div class="subjects-container">
+        <h2>Offered in Both Sessions</h2>
+        <div class="session available-section both-section" id="both-sessions">
+            {% for subject in subjects_by_session['both'] %}
+                {% if subject['code'] != 'CSIT998' and subject['code'] != 'CSIT999' %}
+                    <!-- existing code for displaying subject -->
+                    <div class="subject {{ subject.type }}-subject {{ subject.code }}" draggable="true"
+                        id="{{ subject.code }}"
+                        data-sessions="Both"
+                        data-type="{{ subject.type }}"
+                        data-original-type="{{ subject.type }}"
+                        data-prerequisites='{{ subject.prerequisites_json }}'
+                        data-prerequisite-type="{{ subject.prerequisite_type }}"
+                        data-credits="{{ subject.credit }}">
+
+                        <span>{{ subject.code }} - {{ subject.name }}</span>
+                        {% if subject.prerequisites %}
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle custom-small-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Prerequisites
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    {% if subject.prerequisites|length > 1 %}
+                                        <p class="dropdown-item">{{ "Complete all" if subject.prerequisite_type == "AND" else "Complete one" }}:</p>
+                                    {% endif %}
+                                    {% for pre in subject.prerequisites %}
+                                        <a class="dropdown-item" href="#">{{ pre.code }} - {{ pre.name }}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <h2>Offered in Autumn</h2>
+        <div class="session available-section autumn-section" id="autumn-session">
+            {% for subject in subjects_by_session['autumn'] %}
+                <div class="subject {{ subject.type }}-subject {{ subject.code }}" draggable="true"
+                    id="{{ subject.code }}"
+                    data-sessions="Autumn"
+                    data-type="{{ subject.type }}"
+                    data-original-type="{{ subject.type }}"
+                    data-prerequisites='{{ subject.prerequisites_json }}'
+                    data-prerequisite-type="{{ subject.prerequisite_type }}"
+                    data-credits="{{ subject.credit }}">
+
+                    <span>{{ subject.code }} - {{ subject.name }}</span>
+                    {% if subject.prerequisites %}
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle custom-small-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Prerequisites
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                {% if subject.prerequisites|length > 1 %}
+                                    <p class="dropdown-item">{{ "Complete all" if subject.prerequisite_type == "AND" else "Complete one" }}:</p>
+                                {% endif %}
+                                {% for pre in subject.prerequisites %}
+                                    <a class="dropdown-item" href="#">{{ pre.code }} - {{ pre.name }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <h2>Offered in Spring</h2>
+        <div class="session available-section spring-section" id="spring-session">
+            {% for subject in subjects_by_session['spring'] %}
+                <div class="subject {{ subject.type }}-subject {{ subject.code }}" draggable="true"
+                    id="{{ subject.code }}"
+                    data-sessions="Spring"
+                    data-type="{{ subject.type }}"
+                    data-original-type="{{ subject.type }}"
+                    data-prerequisites='{{ subject.prerequisites_json }}'
+                    data-prerequisite-type="{{ subject.prerequisite_type }}"
+                    data-credits="{{ subject.credit }}">
+
+                    <span>{{ subject.code }} - {{ subject.name }}</span>
+                    {% if subject.prerequisites %}
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle custom-small-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Prerequisites
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                {% if subject.prerequisites|length > 1 %}
+                                    <p class="dropdown-item">{{ "Complete all" if subject.prerequisite_type == "AND" else "Complete one" }}:</p>
+                                {% endif %}
+                                {% for pre in subject.prerequisites %}
+                                    <a class="dropdown-item" href="#">{{ pre.code }} - {{ pre.name }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="planner-container">
+        <h2>Planner</h2>
+        {% for i in range(4) %}
+                <div class="session" id="session{{ i }}">
+                    <h3>{{ sessions[i] }}</h3>
+                    <div class="placeholder" style="min-height: 50px; min-width: 200px; border: 1px solid #ccc;"></div>
+                    <div class="placeholder" style="min-height: 50px; min-width: 200px; border: 1px solid #ccc;"></div>
+                    <div class="placeholder" style="min-height: 50px; min-width: 200px; border: 1px solid #ccc;"></div>
+                    <div class="placeholder" style="min-height: 50px; min-width: 200px; border: 1px solid #ccc;"></div>
+                </div>
+            {% endfor %}
+    </div>
+</div>
+
+<button id="save-btn">Save Planner</button>
+
+
+<!-- Linking to External Libraries -->
+<script src="https://unpkg.com/dragula@3.7.2/dist/dragula.min.js"></script>
+<!-- Linking to the Custom JavaScript File -->
+<script src="{{ url_for('static', filename='dragdrop.js') }}"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{{ url_for('static', filename='major.js') }}"></script>
+<script>
+  window.storedMajor = "{{ current_user.profile.major.name }}";
+</script>
+<script>
+$(document).ready(function(){
+    $('[data-toggle="popover"]').popover();
+});
+</script>
+{% endblock %}

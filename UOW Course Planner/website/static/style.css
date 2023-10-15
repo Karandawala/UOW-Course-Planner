@@ -1,0 +1,76 @@
+/* Center the form on the page */
+body {
+    background: linear-gradient(-45deg, #1a2a4f, #0f1940, #05132a, #000b1c);
+    background-size: 400% 400%;
+    animation: gradient 25s ease infinite;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+form {
+    margin: 0 auto;
+    max-width: 400px;
+    background: #ffffff; /* Fully white background */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+/* Style the form header */
+h3 {
+    text-align: center;
+    color: #333;
+}
+
+/* Style form labels */
+label {
+    font-weight: bold;
+    color: #555;
+}
+
+/* Style form inputs and buttons */
+.form-control {
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 15px;
+
+}
+
+/* Style the submit button */
+.btn-primary {
+    background: linear-gradient(90deg, #007bff, #0056b3);
+    border-color: #007bff;
+    color: #fff;
+    padding: 7px 20px; /* Increase padding to make it longer */
+    transition: background-position 0.2s, border-color 0.2s, transform 0.2s;
+    background-size: 200% auto;
+    background-position: -100%;
+}
+
+/* Add sliding animation when hovering */
+.btn-primary:hover {
+    background-position: 0;
+    border-color: #0056b3;
+    transform: scale(1.05); /* Scale up on hover */
+    cursor: pointer;
+}
+
+
+
+/* Style the form container (optional) */
+.container {
+    margin-top: 20px;
+}
+
